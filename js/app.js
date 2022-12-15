@@ -7,22 +7,41 @@ let productsInCart = [];
 loadEventListeners();
 
 function loadEventListeners() {
-  coursesList.addEventListener('click', addCourseToCart)
+  coursesList.addEventListener('click', addCourseToCart);
+  
+  // delete products from shopping cart
+  shoppingCart.addEventListener('click', deleteProduct);
 }
 
 function addCourseToCart(e) {
   e.preventDefault()
-
+  
   if (e.target.classList.contains('agregar-carrito')) {
     selectedCourse = e.target.parentElement.parentElement
     readInfoCourseSelected(selectedCourse)
   }
-
+  
   
 }
 
-function readInfoCourseSelected(course) {
+// delete products from the shopping cart
 
+function deleteProduct(e) {
+
+  if ( e.target.classList.contains('borrar-curso') ) {
+    productId = e.target.getAttribute('data-id')
+    
+    // delete product using data-id attribute
+
+    productsInCart = productsInCart.filter((product) => product.id !== productId)
+    
+    showItemsInShoppingCart();
+  }
+
+}
+
+function readInfoCourseSelected(course) {
+  
   const infoCourse = {
     image: course.querySelector('img').src,
     title: course.querySelector('h4').textContent,
@@ -31,8 +50,23 @@ function readInfoCourseSelected(course) {
     quantity: 1
   }
 
-  productsInCart = [...productsInCart, infoCourse]
-  console.log(productsInCart);
+  //check if some course its already in the shopping cart, so not add the course only update de quantity
+
+  const exists = productsInCart.some( course => course.id === infoCourse.id )
+  if (exists) {
+    const newArr = productsInCart.map( course => {
+      if( course.id === infoCourse.id ) {
+        course.quantity++;
+        return course;
+      } else {
+        return course;
+      }
+    })
+    productsInCart = [...newArr]
+  } else {
+    productsInCart = [...productsInCart, infoCourse]
+  }
+  
   showItemsInShoppingCart();
 }
 
@@ -44,14 +78,15 @@ function showItemsInShoppingCart() {
   cleanShoppingCart();
   
   productsInCart.forEach((product) => {
+    const { image, title, price, quantity, id } = product;
     const row = document.createElement('tr');
     row.innerHTML = `
       
-        <td><img src="${product.image}"></td>
-        <td>${product.title}</td>
-        <td>${product.price}</td>
-        <td>${product.quantity}</td>
-        <td></td>
+        <td><img src="${image}"></td>
+        <td>${title}</td>
+        <td>${price}</td>
+        <td>${quantity}</td>
+        <td><a href="#" class="borrar-curso" data-id="${id}"> x </td>
      
     `;
 
@@ -67,3 +102,5 @@ function cleanShoppingCart() {
     cartContainer.removeChild(cartContainer.firstChild)
   }
 }
+
+
