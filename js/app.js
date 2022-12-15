@@ -11,6 +11,12 @@ function loadEventListeners() {
   
   // delete products from shopping cart
   shoppingCart.addEventListener('click', deleteProduct);
+
+  // Clean the whole shopping cart
+  emptyCartButton.addEventListener('click', () => {
+    productsInCart = [];
+    cleanShoppingCart();
+  })
 }
 
 function addCourseToCart(e) {
