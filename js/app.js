@@ -12,6 +12,13 @@ function loadEventListeners() {
   // delete products from shopping cart
   shoppingCart.addEventListener('click', deleteProduct);
 
+  // show the content from the localStorage
+  document.addEventListener('DOMContentLoaded', () => {
+    productsInCart = JSON.parse(localStorage.getItem('cart')) || [];
+    showItemsInShoppingCart();
+    
+  })
+
   // Clean the whole shopping cart
   emptyCartButton.addEventListener('click', () => {
     productsInCart = [];
@@ -97,15 +104,26 @@ function showItemsInShoppingCart() {
     `;
 
     cartContainer.appendChild(row);
-    
 
+    // Add the cart contents to the localStorage
+    
+    
   })
+  synchronizeStorage();
 
 }
 
+
+function synchronizeStorage() {
+    localStorage.setItem('cart', JSON.stringify(productsInCart));
+    
+}
+
+
 function cleanShoppingCart() {
   while(cartContainer.firstChild) {
-    cartContainer.removeChild(cartContainer.firstChild)
+    cartContainer.firstElementChild.remove()
+    console.log(productsInCart)
   }
 }
 
